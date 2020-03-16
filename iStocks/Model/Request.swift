@@ -9,7 +9,7 @@
 import Foundation
 
 struct Request {
-    private static func requestData(with url: URLRequest,
+    private static func getData(with url: URLRequest,
                                     completion: @escaping (Result<Data, RequestError>) -> ())  {
         URLSession.shared.dataTask(with: url) { (data, _, error) in
             guard error == nil else {
@@ -24,10 +24,10 @@ struct Request {
         }.resume()
     }
     
-    static func requestJSON<T: Decodable>(with urlRequest: URLRequest,
+    static func getJSON<T: Decodable>(with urlRequest: URLRequest,
                                           type: T.Type,
                                           completion: @escaping (Result<T, RequestError>) -> ()) {
-        requestData(with: urlRequest, completion: { result in
+        getData(with: urlRequest, completion: { result in
             switch result {
             case .success(let data):
                 if let decoded = try? JSONDecoder().decode(T.self, from: data) {
@@ -41,10 +41,10 @@ struct Request {
         })
     }
     
-    static func requestJSON<T: Decodable>(with url: URL,
+    static func getJSON<T: Decodable>(with url: URL,
                                           type: T.Type,
                                           completion: @escaping (Result<T, RequestError>) -> ()) {
-        requestJSON(with: URLRequest(url: url), type: T.self) {
+        getJSON(with: URLRequest(url: url), type: T.self) {
             completion($0)
         }
     }
@@ -69,7 +69,7 @@ struct Request {
                 }
             }
             
-            requestJSON(with: urlRequest, type: R.self) {
+            getJSON(with: urlRequest, type: R.self) {
                 completion($0)
             }
     }

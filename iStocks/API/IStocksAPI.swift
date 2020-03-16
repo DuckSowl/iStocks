@@ -40,4 +40,38 @@ struct IStocksAPI {
             completion($0)
         }
     }
+    
+    static func getQuotes(token: Token,
+                          for filter: QuotesFilter,
+                          completion: @escaping (Result<[Quote], Request.RequestError>) -> ()) {
+        
+        var quotesRequest = URLRequest(url: (URL(string: "\(apiURL)stocks/\(filter.path.filter { !$0.unicodeScalars.contains(where: {!CharacterSet.urlPathAllowed.contains($0)}) })"))!)
+        
+        quotesRequest.authorize(with: token)
+        
+        Request.getJSON(with: quotesRequest,
+                        type: [Quote].self) {
+            completion($0)
+        }
+    }
+                
+    enum QuotesFilter {
+        case all(count: Int)
+        case search(for: String)
+        
+        fileprivate var path: String {
+            switch self {
+            case .all(let count):
+                return "\(count)"
+            case .search(let searchText):
+                return "search/\(searchText)"
+            }
+        }
+    }
+}
+
+fileprivate extension URLRequest {
+    mutating func authorize(with token: Token) {
+        self.addValue("Bearer \(token.token)", forHTTPHeaderField: "Authorization")
+    }
 }

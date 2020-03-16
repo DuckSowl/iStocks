@@ -16,7 +16,7 @@ struct ContentView: View {
             if self.settings.token == nil {
                 AuthenticationView(token: self.$settings.token)
             } else {
-                Text(self.settings.token!.token)
+                StocksView(token: self.$settings.token)
             }
         }
     }
