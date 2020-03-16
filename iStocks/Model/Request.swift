@@ -9,7 +9,8 @@
 import Foundation
 
 struct Request {
-    static func requestData(with url: URL, completion: @escaping (Result<Data, RequestError>) -> ())  {
+    private static func requestData(with url: URLRequest,
+                                    completion: @escaping (Result<Data, RequestError>) -> ())  {
         URLSession.shared.dataTask(with: url) { (data, _, error) in
             guard error == nil else {
                 return completion(.failure(.networkError(error: error!)))
@@ -23,9 +24,10 @@ struct Request {
         }.resume()
     }
     
-    static func requestJSON<T>(with url: URL,
-                               completion: @escaping (Result<T, RequestError>) -> ()) where T: Decodable {
-        requestData(with: url, completion: { result in
+    static func requestJSON<T: Decodable>(with urlRequest: URLRequest,
+                                          type: T.Type,
+                                          completion: @escaping (Result<T, RequestError>) -> ()) {
+        requestData(with: urlRequest, completion: { result in
             switch result {
             case .success(let data):
                 if let decoded = try? JSONDecoder().decode(T.self, from: data) {
@@ -39,9 +41,54 @@ struct Request {
         })
     }
     
+    static func requestJSON<T: Decodable>(with url: URL,
+                                          type: T.Type,
+                                          completion: @escaping (Result<T, RequestError>) -> ()) {
+        requestJSON(with: URLRequest(url: url), type: T.self) {
+            completion($0)
+        }
+    }
+    
+    static func postJSON<P, R>(with urlRequest: URLRequest,
+                               data: P? = nil,
+                               responseType: R.Type,
+                               completion: @escaping (Result<R, RequestError>) -> ())
+        where P: Encodable, R: Decodable {
+            var urlRequest = urlRequest
+            
+            urlRequest.httpMethod = "POST"
+            urlRequest.addValue("application/json",
+                                forHTTPHeaderField: "Content-Type")
+            
+            if data != nil {
+                urlRequest.httpBody = try? JSONEncoder().encode(data)
+                
+                guard urlRequest.httpBody != nil else {
+                    completion(.failure(.encodingError))
+                    return
+                }
+            }
+            
+            requestJSON(with: urlRequest, type: R.self) {
+                completion($0)
+            }
+    }
+    
+    static func postJSON<R>(with urlRequest: URLRequest,
+                            responseType: R.Type,
+                            completion: @escaping (Result<R, RequestError>) -> ())
+        where R: Decodable {
+            let data: String? = nil
+            postJSON(with: urlRequest, data: data, responseType: R.self) {
+                completion($0)
+            }
+    }
+    
+    
     enum RequestError: Error {
         case networkError(error: Error)
         case missingData
         case decodingError
+        case encodingError
     }
 }
