@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct AuthenticationView: View {
-    @Binding var token: Token?
+    @Binding var isTokenSet: Bool
     
     @State private var user = User()
     @State private var showingAlert = false
@@ -24,16 +24,15 @@ struct AuthenticationView: View {
             
             VStack {
                 TextField("Username", text: $user.username)
-                Color.yellow
+                Color.iStocksPrimary
                     .frame(height: 1)
                 TextField("Password", text: $user.password)
             }
             .padding(10)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.yellow, lineWidth: 1)
-            )
-                .padding(.horizontal)
+                    .stroke(Color.iStocksPrimary, lineWidth: 1))
+            .padding(.horizontal)
             
             
             HStack(spacing: 16) {
@@ -42,14 +41,14 @@ struct AuthenticationView: View {
                         self.register()
                     }
                 }
-                .buttonStyle(MyButtonStyle())
+                .buttonStyle(IStocksButtonStyle())
                 
                 Button("Sign In") {
                     if self.fieldsAreValid() {
                         self.login()
                     }
                 }
-                .buttonStyle(MyButtonStyle())
+                .buttonStyle(IStocksButtonStyle())
             }
             .padding()
             
@@ -85,8 +84,9 @@ struct AuthenticationView: View {
         IStocksAPI.login(user: user) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success(let token):
-                    self.token = token
+                case .success:
+                    self.isTokenSet = true
+                    return
                 case .failure:
                     self.showAlert(title: "Unable to login")
                 }
@@ -98,8 +98,9 @@ struct AuthenticationView: View {
         IStocksAPI.register(user: user) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success(let token):
-                    self.token = token
+                case .success:
+                    self.isTokenSet = true
+                    return
                 case .failure:
                     self.showAlert(title: "Unable to register")
                 }

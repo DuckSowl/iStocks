@@ -13,5 +13,11 @@ struct Quote: Codable {
     var companyName: String
     var latestPrice: Double?
     var change: Double?
+    
+    var previousVolume: Int?
+    var marketCap: Int?
+    var week52High: Double?
+    var week52Low: Double?
 }
 
+typealias ChartData = [Double]

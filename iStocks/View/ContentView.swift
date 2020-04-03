@@ -9,15 +9,33 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var settings: Settings
+    private let tokenKey = "tokenKey"
+    @State var isTokenSet: Bool = false {
+        didSet { saveToken() }
+    }
     
     var body: some View {
         Group {
-            if self.settings.token == nil {
-                AuthenticationView(token: self.$settings.token)
+            if self.isTokenSet {
+                StocksView()
             } else {
-                StocksView(token: self.$settings.token)
+                AuthenticationView(isTokenSet: $isTokenSet)
             }
+        }.onAppear() {
+            self.loadToken()
+        }
+    }
+    
+    func loadToken() {
+        if let token = UserDefaults.standard.string(forKey: self.tokenKey) {
+            IStocksAPI.set(token: token)
+            isTokenSet = true
+        }
+    }
+    
+    func saveToken() {
+        if let token = IStocksAPI.token {
+            UserDefaults.standard.set(token, forKey: self.tokenKey)
         }
     }
 }

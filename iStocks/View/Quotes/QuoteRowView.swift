@@ -9,7 +9,11 @@
 import SwiftUI
 
 struct QuoteRowView: View {
-    @ObservedObject var quote: QuoteVM
+    let quote: QuoteVM
+    
+    init(_ quote: Quote) {
+        self.quote = QuoteVM(quote)
+    }
     
     var body: some View {
         HStack {
@@ -27,5 +31,21 @@ struct QuoteRowView: View {
                     .foregroundColor(quote.changeColor)
             }
         }
+    }
+}
+
+struct QuoteShortDetailView: View {
+    let quote: QuoteVM
+    
+    init(_ quote: Quote) {
+        self.quote = QuoteVM(quote)
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(quote.symbol)
+            Text(quote.companyName)
+        }
+        .font(.title)
     }
 }

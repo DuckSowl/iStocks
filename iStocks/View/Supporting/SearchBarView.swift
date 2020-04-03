@@ -1,5 +1,5 @@
 //
-//  SearchView.swift
+//  SearchBarView.swift
 //  iStocks
 //
 //  Created by Anton Tolstov on 13.03.2020.
@@ -8,9 +8,8 @@
 
 import SwiftUI
 
-struct SearchView: View {
+struct SearchBarView: View {
     @Binding var searchText: String
-    
     @State private var showingCancelButton = false
     
     var body: some View {
