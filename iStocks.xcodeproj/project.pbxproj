@@ -538,7 +538,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/DuckSowl/SwiftUILineChart.git";
 			requirement = {
-				branch = development;
+				branch = master;
 				kind = branch;
 			};
 		};

@@ -9,8 +9,8 @@
 import Foundation
 
 struct IStocksAPI {
-//    private static let baseURL = "https://istocks-back.herokuapp.com/"
-    private static let baseURL = "http://localhost:8080/"
+    private static let baseURL = "https://istocks-back.herokuapp.com/"
+//    private static let baseURL = "http://localhost:8080/"
     private static let apiURL = "\(baseURL)istocks/"
     
     private(set) static var token: String?

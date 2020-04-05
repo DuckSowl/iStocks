@@ -10,14 +10,12 @@ import SwiftUI
 
 struct ContentView: View {
     private let tokenKey = "tokenKey"
-    @State var isTokenSet: Bool = false {
-        didSet { saveToken() }
-    }
+    @State var isTokenSet: Bool = false
     
     var body: some View {
         Group {
             if self.isTokenSet {
-                StocksView()
+                StocksView(isTokenSet: $isTokenSet)
             } else {
                 AuthenticationView(isTokenSet: $isTokenSet)
             }
@@ -33,9 +31,5 @@ struct ContentView: View {
         }
     }
     
-    func saveToken() {
-        if let token = IStocksAPI.token {
-            UserDefaults.standard.set(token, forKey: self.tokenKey)
-        }
-    }
+   
 }

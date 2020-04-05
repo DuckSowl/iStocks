@@ -12,6 +12,7 @@ import Combine
 struct StocksView: View {
     let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     @ObservedObject var stocks = StocksVM()
+    @Binding var isTokenSet: Bool
     
     var body: some View {
         NavigationView {
@@ -31,6 +32,9 @@ struct StocksView: View {
                 .buttonStyle(IStocksButtonStyle())
                 .padding(.horizontal)
 
+                .navigationBarItems(trailing: Button("Log Out") {
+                    self.isTokenSet = false
+                })
                 .navigationBarTitle("iStocks")
                 .alert(isPresented: self.$stocks.updatingError) {
                     Alert(title: Text(stocks.updatingErrorTitle),

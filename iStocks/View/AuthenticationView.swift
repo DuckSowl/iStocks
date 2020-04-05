@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct AuthenticationView: View {
+    private let tokenKey = "tokenKey"
     @Binding var isTokenSet: Bool
     
     @State private var user = User()
@@ -75,6 +76,12 @@ struct AuthenticationView: View {
         return true
     }
     
+    func saveToken() {
+        if let token = IStocksAPI.token {
+            UserDefaults.standard.set(token, forKey: self.tokenKey)
+        }
+    }
+    
     func showAlert(title: String) {
         self.alertTitle = title
         self.showingAlert = true
@@ -86,6 +93,7 @@ struct AuthenticationView: View {
                 switch result {
                 case .success:
                     self.isTokenSet = true
+                    self.saveToken()
                     return
                 case .failure:
                     self.showAlert(title: "Unable to login")
@@ -100,6 +108,7 @@ struct AuthenticationView: View {
                 switch result {
                 case .success:
                     self.isTokenSet = true
+                    self.saveToken()
                     return
                 case .failure:
                     self.showAlert(title: "Unable to register")

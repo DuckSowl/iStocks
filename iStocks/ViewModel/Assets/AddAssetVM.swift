@@ -15,9 +15,10 @@ class AddAssetVM: SearchStocksVM {
     var date: Date = Date()
     
     func add() {
-        guard let price = Double(purchacePrice) else { return }
+        guard let price = Double(purchacePrice),
+        let quote = selectedQuote else { return }
         
-        let asset = Asset(quote: selectedQuote!, date: date, price: price)
+        let asset = Asset(quote: quote, date: date, price: price)
         IStocksAPI.add(asset: asset) { _ in
             print("result of insertion")
         }
